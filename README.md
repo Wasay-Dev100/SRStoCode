@@ -1,17 +1,17 @@
-# Kinmail SRS to Code - MVC Architecture Extension (v2.0)
+# Kinmail SRS to Code - MVC Architecture Extension 
 
 An AI-powered VS Code extension that generates complete, production-ready MVC (Model-View-Controller) code from Software Requirements Specifications (SRS) documents.
 
 > **Note:** This is version 2.0 of the Kinmail SRS to Code extension. **Test generation and code verification features are currently in development and testing phase**. These features are being actively refined and improved.
 
-## Features
+## What it Does
 
-- 📋 **SRS Document Upload** - Support for PDF, DOCX, and TXT files
-- 🎯 **Interactive Dashboard** - Visual interface to manage requirements and features
-- 💻 **MVC Code Generation** - Generate complete MVC applications for Python, JavaScript, Java, C#, and C++ with proper framework-specific architecture
-- 🧪 **Hybrid Test Generation** - Generate comprehensive test suites based on both SRS requirements and actual generated code
-- ✅ **Code Verification** - Validate generated code with syntax checking and automated testing
-- 🔄 **Iterative Development** - Generate code for individual features as needed
+- 📋 SRS Document Upload - Support for PDF, DOCX, and TXT files
+- 🎯 Interactive Dashboard - Visual interface to manage requirements and features
+- 💻 MVC Code Generation - Generate complete MVC applications for Python, JavaScript, Java, C#, and C++ with proper framework-specific architecture
+- 🧪 Hybrid Test Generation - Generate comprehensive test suites based on both SRS requirements and actual generated code
+- ✅ Code Verification - Validate generated code with syntax checking and automated testing
+
 
 ## Installation
 
@@ -226,6 +226,4 @@ This extension uses JavaScript (not TypeScript), so no compilation is needed. Si
 - Additional framework support
 - Performance optimizations
 
-## License
 
-MIT License - see LICENSE file for details.
