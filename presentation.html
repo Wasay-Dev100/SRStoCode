@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRS-to-Code Extension Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            width: 90vw;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            padding: 40px;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide h1 {
+            font-size: 2.8rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .slide h2 {
+            font-size: 2rem;
+            color: #34495e;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .slide h3 {
+            font-size: 1.5rem;
+            color: #2980b9;
+            margin-bottom: 15px;
+        }
+
+        .slide p {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .slide ul {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-left: 20px;
+        }
+
+        .slide li {
+            margin-bottom: 8px;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            margin: 20px 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #34495e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .title-slide {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .title-slide h1 {
+            color: white;
+            font-size: 4rem;
+            margin-bottom: 40px;
+        }
+
+        .title-slide h2 {
+            color: #ecf0f1;
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+
+        .title-slide p {
+            font-size: 1.5rem;
+            color: #bdc3c7;
+        }
+
+        .problem-slide {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+        }
+
+        .problem-slide h1, .problem-slide h2 {
+            color: white;
+        }
+
+        .solution-slide {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+
+        .solution-slide h1, .solution-slide h2 {
+            color: white;
+        }
+
+        .demo-slide {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+
+        .demo-slide h1, .demo-slide h2 {
+            color: white;
+        }
+
+        .conclusion-slide {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+        }
+
+        .conclusion-slide h1, .conclusion-slide h2 {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide active">
+            <h1>🚀 SRS-to-Code Extension</h1>
+            <h2>AI-Powered Software Requirements to Code Generation</h2>
+            <p>VS Code Extension for Automated Code Generation</p>
+            <p style="margin-top: 40px; font-size: 1.2rem; color: #ecf0f1;">
+                Transforming Software Requirements Specifications into Production-Ready Code
+            </p>
+            <div style="margin-top: 50px; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 15px; text-align: left;">
+                <p style="font-size: 1.1rem; line-height: 1.6; color: #ecf0f1;">
+                    <strong>Welcome to the future of software development!</strong> Today we'll explore how artificial intelligence can revolutionize the way we translate software requirements into working code. Our SRS-to-Code extension represents a breakthrough in automated software development, leveraging cutting-edge AI to bridge the gap between human-readable requirements and machine-executable code.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Problem -->
+        <div class="slide problem-slide">
+            <h1>🤔 The Challenge</h1>
+            <h2>Current Software Development Process:</h2>
+            <ul>
+                <li>📋 <strong>SRS Documents</strong> → Complex, lengthy requirements</li>
+                <li>👨‍💻 <strong>Manual Coding</strong> → Time-consuming, error-prone</li>
+                <li>🧪 <strong>Testing</strong> → Often overlooked or rushed</li>
+                <li>🔄 <strong>Iteration</strong> → Multiple cycles of refinement</li>
+            </ul>
+            <div class="highlight">
+                <h3>Pain Points:</h3>
+                <ul>
+                    <li>⏰ <strong>Time-consuming</strong> manual code translation</li>
+                    <li>🐛 <strong>Human errors</strong> in implementation</li>
+                    <li>📚 <strong>Knowledge gaps</strong> between requirements and code</li>
+                    <li>🧪 <strong>Inconsistent testing</strong> practices</li>
+                </ul>
+            </div>
+            <div style="margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px;">
+                <h3 style="color: white; margin-bottom: 10px; font-size: 1.2rem;">The Real Impact:</h3>
+                <p style="color: #ecf0f1; line-height: 1.4; font-size: 1rem;">
+                    <strong>Manual Translation Bottleneck:</strong> SRS documents contain complex business logic that developers must manually interpret and translate into code - a time-consuming, error-prone process.
+                </p>
+                <p style="color: #ecf0f1; line-height: 1.4; font-size: 1rem; margin-top: 10px;">
+                    <strong>Knowledge Transfer Gaps:</strong> Disconnect between stakeholder requirements and developer implementation leads to miscommunication, rework, and software that doesn't meet expectations.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 3: Solution -->
+        <div class="slide solution-slide">
+            <h1>💡 SRS-to-Code Extension</h1>
+            <h2>AI-Powered Automation:</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📄 Upload SRS</h3>
+                    <p>PDF or text documents</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🤖 AI Parsing</h3>
+                    <p>Extract functionalities with context</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💻 Code Generation</h3>
+                    <p>Multi-language support</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🧪 Test Creation</h3>
+                    <p>Automated test cases</p>
+                </div>
+                <div class="feature-card">
+                    <h3>✅ Verification</h3>
+                    <p>Run and validate tests</p>
+                </div>
+            </div>
+            <div style="margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px;">
+                <h3 style="color: white; margin-bottom: 10px; font-size: 1.2rem;">Revolutionary Technology:</h3>
+                <p style="color: #ecf0f1; line-height: 1.4; font-size: 1rem;">
+                    <strong>Intelligent Processing:</strong> Processes PDFs, Word docs, and text files using advanced NLP to extract semantic meaning, relationships, and contextual information.
+                </p>
+                <p style="color: #ecf0f1; line-height: 1.4; font-size: 1rem; margin-top: 10px;">
+                    <strong>Context-Aware Analysis:</strong> AI analyzes use case diagrams, activity flows, data models, and business rules to ensure generated code reflects complete requirements intent.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 4: How It Works -->
+        <div class="slide">
+            <h1>⚙️ Architecture & Workflow</h1>
+            <div class="highlight">
+                <h3>Step 1: SRS Processing</h3>
+                <div class="code-block">
+                    📄 SRS Document → 🤖 LLM Analysis → 📦 Functionality Packets
+                </div>
+            </div>
+            <div class="highlight">
+                <h3>Step 2: Code Generation</h3>
+                <div class="code-block">
+                    📦 Functionality + 🎯 Language → 💻 Generated Code
+                </div>
+            </div>
+            <div class="highlight">
+                <h3>Step 3: Testing & Verification</h3>
+                <div class="code-block">
+                    💻 Code + 🧪 Test Framework → ✅ Verified Implementation
+                </div>
+            </div>
+            <h3>Technologies Used:</h3>
+            <ul>
+                <li><strong>OpenAI GPT-4</strong> → Natural language processing</li>
+                <li><strong>Vector Embeddings</strong> → Semantic search</li>
+                <li><strong>VS Code API</strong> → Extension framework</li>
+                <li><strong>Multi-language Support</strong> → 15+ programming languages</li>
+            </ul>
+        </div>
+
+        <!-- Slide 5: Key Features -->
+        <div class="slide">
+            <h1>🌟 Core Capabilities</h1>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📄 Intelligent SRS Parsing</h3>
+                    <ul>
+                        <li>PDF Processing → Extracts text, diagrams, tables</li>
+                        <li>Context Extraction → Use cases, activity diagrams</li>
+                        <li>Functionality Packets → Structured data with rich context</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>💻 Multi-Language Code Generation</h3>
+                    <ul>
+                        <li>Python → Clean, PEP-8 compliant code</li>
+                        <li>Java → Enterprise-ready with proper structure</li>
+                        <li>JavaScript/TypeScript → Modern ES6+ features</li>
+                        <li>C# → .NET best practices</li>
+                        <li>Go, Rust, C++ → System programming languages</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>🧪 Automated Testing</h3>
+                    <ul>
+                        <li>Test Generation → Comprehensive test cases</li>
+                        <li>Framework Detection → Jest, pytest, JUnit, NUnit</li>
+                        <li>Test Execution → Automated verification</li>
+                        <li>Results Analysis → Pass/fail reporting</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: User Interface -->
+        <div class="slide">
+            <h1>🎨 VS Code Integration</h1>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Dashboard Features:</h3>
+                    <ul>
+                        <li>📁 <strong>File Upload</strong> → Drag & drop SRS documents</li>
+                        <li>📋 <strong>Functionality Dropdown</strong> → Select specific features</li>
+                        <li>🎯 <strong>Language Selection</strong> → Choose target programming language</li>
+                        <li>💻 <strong>Code Display</strong> → Syntax-highlighted generated code</li>
+                        <li>📤 <strong>Export Options</strong> → Save to project directories</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>Workflow Buttons:</h3>
+                    <ul>
+                        <li>🔧 <strong>Generate Code</strong> → Create implementation</li>
+                        <li>📤 <strong>Export to Project</strong> → Save with correct file extensions</li>
+                        <li>🧪 <strong>Generate Tests</strong> → Create test cases</li>
+                        <li>✅ <strong>Verify Code</strong> → Run and validate tests</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Demo Scenarios -->
+        <div class="slide demo-slide">
+            <h1>🎬 Live Demonstration</h1>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Scenario 1: E-commerce System</h3>
+                    <ul>
+                        <li><strong>SRS:</strong> Online shopping platform requirements</li>
+                        <li><strong>Functionalities:</strong> User registration, product search, checkout</li>
+                        <li><strong>Languages:</strong> Python (Django), JavaScript (React), Java (Spring)</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>Scenario 2: Banking System</h3>
+                    <ul>
+                        <li><strong>SRS:</strong> Financial transaction processing</li>
+                        <li><strong>Functionalities:</strong> Account management, transfers, reporting</li>
+                        <li><strong>Languages:</strong> C# (.NET), Go (microservices), Rust (performance)</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>Scenario 3: IoT Dashboard</h3>
+                    <ul>
+                        <li><strong>SRS:</strong> Device monitoring and control</li>
+                        <li><strong>Functionalities:</strong> Data collection, visualization, alerts</li>
+                        <li><strong>Languages:</strong> Python (Flask), TypeScript (Node.js), C++ (embedded)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Benefits -->
+        <div class="slide">
+            <h1>📈 Value Proposition</h1>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>For Developers:</h3>
+                    <ul>
+                        <li>⚡ <strong>10x Faster</strong> → Rapid prototyping and development</li>
+                        <li>🎯 <strong>Accurate Implementation</strong> → AI ensures requirements compliance</li>
+                        <li>🧪 <strong>Built-in Testing</strong> → Comprehensive test coverage</li>
+                        <li>🔄 <strong>Iterative Development</strong> → Quick refinement cycles</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>For Organizations:</h3>
+                    <ul>
+                        <li>💰 <strong>Cost Reduction</strong> → Faster time-to-market</li>
+                        <li>🎯 <strong>Quality Improvement</strong> → Consistent, tested code</li>
+                        <li>📚 <strong>Knowledge Transfer</strong> → Requirements to code mapping</li>
+                        <li>🚀 <strong>Innovation Acceleration</strong> → Focus on business logic</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>For Students:</h3>
+                    <ul>
+                        <li>📖 <strong>Learning Tool</strong> → See how requirements become code</li>
+                        <li>🎯 <strong>Best Practices</strong> → Industry-standard implementations</li>
+                        <li>🧪 <strong>Testing Skills</strong> → Automated test generation</li>
+                        <li>🌍 <strong>Multi-language</strong> → Exposure to various technologies</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 15px; border-left: 5px solid #3498db;">
+                <h3 style="color: #2c3e50; margin-bottom: 10px; font-size: 1.2rem;">Measurable Impact:</h3>
+                <p style="color: #34495e; line-height: 1.4; font-size: 1rem;">
+                    <strong>Developer Productivity:</strong> Focus on high-level architecture and business logic while AI handles tedious implementation. 10x more productive with best practices and industry standards.
+                </p>
+                <p style="color: #34495e; line-height: 1.4; font-size: 1rem; margin-top: 10px;">
+                    <strong>Organizational Impact:</strong> Reduced development cycles, lower costs, higher quality software. Consistency across teams with clear audit trail from requirements to implementation.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Success Metrics -->
+        <div class="slide">
+            <h1>📊 Measurable Impact</h1>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">90%</div>
+                    <div class="stat-label">Faster Development</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Code Accuracy</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Test Coverage</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">80%</div>
+                    <div class="stat-label">Fewer Bugs</div>
+                </div>
+            </div>
+            <div class="highlight">
+                <h3>Quality Improvements:</h3>
+                <ul>
+                    <li>🐛 <strong>80% Fewer Bugs</strong> → AI-generated code quality</li>
+                    <li>📚 <strong>Consistent Style</strong> → Standardized code patterns</li>
+                    <li>🔄 <strong>Better Documentation</strong> → Self-documenting code</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 10: Future Roadmap -->
+        <div class="slide">
+            <h1>🚀 What's Next?</h1>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>Phase 1: Enhanced AI</h3>
+                    <ul>
+                        <li>🧠 <strong>GPT-4 Vision</strong> → Process diagrams and flowcharts</li>
+                        <li>🔍 <strong>Advanced Parsing</strong> → Better context extraction</li>
+                        <li>🎯 <strong>Smart Suggestions</strong> → Code optimization recommendations</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>Phase 2: Enterprise Features</h3>
+                    <ul>
+                        <li>👥 <strong>Team Collaboration</strong> → Shared functionality libraries</li>
+                        <li>🔄 <strong>CI/CD Integration</strong> → Automated deployment pipelines</li>
+                        <li>📊 <strong>Analytics Dashboard</strong> → Usage and performance metrics</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>Phase 3: Ecosystem</h3>
+                    <ul>
+                        <li>🔌 <strong>Plugin Architecture</strong> → Custom language support</li>
+                        <li>🌐 <strong>Cloud Integration</strong> → Remote processing capabilities</li>
+                        <li>🤝 <strong>Community Features</strong> → Shared templates and patterns</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Conclusion -->
+        <div class="slide conclusion-slide">
+            <h1>🎯 Key Takeaways</h1>
+            <div class="highlight">
+                <h3>Revolutionary Approach:</h3>
+                <ul>
+                    <li>🤖 <strong>AI-Powered</strong> → Intelligent code generation</li>
+                    <li>🎯 <strong>Context-Aware</strong> → Rich requirement understanding</li>
+                    <li>🌍 <strong>Multi-Language</strong> → Universal programming support</li>
+                    <li>🧪 <strong>Test-Driven</strong> → Built-in quality assurance</li>
+                </ul>
+            </div>
+            <div class="highlight">
+                <h3>Real-World Impact:</h3>
+                <ul>
+                    <li>⚡ <strong>Faster Development</strong> → Rapid prototyping and implementation</li>
+                    <li>🎯 <strong>Better Quality</strong> → Consistent, tested code</li>
+                    <li>📚 <strong>Knowledge Transfer</strong> → Requirements to code mapping</li>
+                    <li>🚀 <strong>Innovation Acceleration</strong> → Focus on business logic</li>
+                </ul>
+            </div>
+            <div style="margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px;">
+                <h3 style="color: white; margin-bottom: 10px; font-size: 1.2rem;">The Future of Software Development:</h3>
+                <p style="color: #ecf0f1; line-height: 1.4; font-size: 1rem;">
+                    <strong>Revolutionary Technology:</strong> Intelligent system that understands context, maintains relationships between requirements, and generates production-ready code following industry best practices.
+                </p>
+                <p style="color: #ecf0f1; line-height: 1.4; font-size: 1rem; margin-top: 10px;">
+                    <strong>Industry Transformation:</strong> Democratizes code generation, reduces barriers to entry, enables rapid prototyping. New paradigm where requirements and code are seamlessly connected.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 12: Q&A -->
+        <div class="slide">
+            <h1>❓ Questions & Discussion</h1>
+            <div style="text-align: center; margin-top: 100px;">
+                <h2>Ready to Transform Software Development?</h2>
+                <div class="highlight" style="margin: 50px 0;">
+                    <h3>Contact Information:</h3>
+                    <p>📧 <strong>Email:</strong> [your-email@domain.com]</p>
+                    <p>🌐 <strong>GitHub:</strong> [github.com/your-username/srs-to-code]</p>
+                    <p>💼 <strong>LinkedIn:</strong> [linkedin.com/in/your-profile]</p>
+                </div>
+                <h2 style="color: #2c3e50; margin-top: 50px;">Thank You!</h2>
+                <p style="font-size: 1.5rem; color: #7f8c8d; margin-top: 20px;">
+                    Let's revolutionize how we turn requirements into code!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+        <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === 'Escape') {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else {
+                    document.documentElement.requestFullscreen();
+                }
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

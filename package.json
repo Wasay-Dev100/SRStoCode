@@ -1,0 +1,176 @@
+{
+  "name": "kinmail-srs-to-code-mvc",
+  "displayName": "Kinmail SRS to Code - MVC Architecture",
+  "description": "AI-powered MVC architecture code generation from Software Requirements Specifications",
+  "version": "2.0.0",
+  "publisher": "kinmail",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other",
+    "Machine Learning",
+    "Snippets"
+  ],
+  "keywords": [
+    "ai",
+    "code-generation",
+    "srs",
+    "requirements",
+    "flask",
+    "python"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "kinmail.openDashboard",
+        "title": "Open Kinmail Dashboard",
+        "category": "Kinmail"
+      },
+      {
+        "command": "kinmail.uploadSRS",
+        "title": "Upload SRS Document",
+        "category": "Kinmail"
+      },
+      {
+        "command": "kinmail.generateFeature",
+        "title": "Generate Selected Feature",
+        "category": "Kinmail"
+      },
+      {
+        "command": "kinmail.runTests",
+        "title": "Run Generated Tests",
+        "category": "Kinmail"
+      },
+      {
+        "command": "kinmail.verifyCode",
+        "title": "Verify Generated Code",
+        "category": "Kinmail"
+      },
+      {
+        "command": "kinmail.test",
+        "title": "Test Extension",
+        "category": "Kinmail"
+      },
+      {
+        "command": "kinmail.testApi",
+        "title": "Test API Connection",
+        "category": "Kinmail"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "kinmail.uploadSRS",
+          "when": "resourceExtname == .pdf || resourceExtname == .docx || resourceExtname == .txt",
+          "group": "kinmail"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "kinmail.openDashboard",
+          "when": "true"
+        },
+        {
+          "command": "kinmail.uploadSRS",
+          "when": "true"
+        },
+        {
+          "command": "kinmail.generateFeature",
+          "when": "kinmail.hasSRS"
+        }
+      ]
+    },
+    "views": {
+      "kinmail": [
+        {
+          "id": "kinmailDashboard",
+          "name": "Kinmail Dashboard",
+          "when": "kinmail.hasSRS"
+        },
+        {
+          "id": "kinmailFeatures",
+          "name": "Available Features",
+          "when": "kinmail.hasSRS"
+        },
+        {
+          "id": "kinmailGenerated",
+          "name": "Generated Code",
+          "when": "kinmail.hasGeneratedCode"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "kinmail",
+          "title": "Kinmail",
+          "icon": "$(robot)"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Kinmail SRS to Code",
+      "properties": {
+        "kinmail.openaiApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI API Key for code generation"
+        },
+        "kinmail.llamaParseApiKey": {
+          "type": "string",
+          "default": "llx-ioJNsjYfTzT9uzxfOpn35hTwpj8ubUNpV1dH2N9d5o3JVQpj",
+          "description": "LlamaParse API Key for advanced PDF parsing"
+        },
+        "kinmail.model": {
+          "type": "string",
+          "default": "gpt-4-turbo",
+          "enum": [
+            "gpt-4",
+            "gpt-4-turbo",
+            "gpt-3.5-turbo"
+          ],
+          "description": "LLM Model to use for code generation"
+        },
+        "kinmail.autoTest": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically generate tests for generated code"
+        },
+        "kinmail.autoVerify": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically verify generated code"
+        },
+        "kinmail.useLocalModel": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use local GPT-OSS model instead of OpenAI API"
+        },
+        "kinmail.ollamaModel": {
+          "type": "string",
+          "default": "gpt4all:7b",
+          "description": "GPT-OSS model to use (e.g., gpt4all:7b, gpt-j:6b, gpt-neox:20b)"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "echo 'No compilation needed for JavaScript'",
+    "test": "echo 'No tests configured'"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "form-data": "^4.0.4",
+    "mammoth": "^1.6.0",
+    "pdf-parse": "^1.1.1",
+    "pdf-poppler": "^0.2.3",
+    "pdf2pic": "^3.2.0",
+    "pdfjs-dist": "^5.4.296",
+    "pdfplumber": "^0.0.1-security"
+  }
+}

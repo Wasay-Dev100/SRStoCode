@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'unsafe-inline';">
+    <title>Kinmail SRS to Code Generator</title>
+    <link href="${styleUri}" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="header-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="header-text">
+                    <h1>Kinmail SRS to Code Generator</h1>
+                    <p>AI-powered code generation from Software Requirements Specifications</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-content">
+            <!-- Analysis Panel -->
+            <div class="analysis-panel">
+                <div class="panel-header">
+                    <h2>SRS Document</h2>
+                    <div class="panel-badge">
+                        <span class="badge">Ready</span>
+                    </div>
+                </div>
+                
+                <div class="input-section">
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <label for="srsFileInput">Upload SRS Document</label>
+                            <input type="file" id="srsFileInput" accept=".pdf,.docx,.txt" class="file-input">
+                        </div>
+                        <button id="uploadBtn" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 15V19A2 2 0 0 1 19 21H5A2 2 0 0 1 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Upload & Parse
+                        </button>
+                    </div>
+                    <div class="input-help">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <path d="M9.09 9A3 3 0 0 1 12 6C13.66 6 15 7.34 15 9C15 10.66 13.66 12 12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Upload a PDF, DOCX, or TXT file containing your Software Requirements Specification
+                    </div>
+                </div>
+
+                <!-- Functionality Section -->
+                <div id="functionalitySection" class="functionality-section" style="display: none;">
+                    <div class="section-header">
+                        <h3>Available Functionalities</h3>
+                        <p>Select a functionality to generate code for</p>
+                    </div>
+                    
+                    <div class="functionality-dropdown">
+                        <label for="functionalitySelect">Choose Functionality:</label>
+                        <select id="functionalitySelect" class="functionality-select">
+                            <option value="">Select a functionality...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="language-selection">
+                        <label for="languageSelect">Programming Language:</label>
+                        <select id="languageSelect" class="language-select">
+                            <option value="python">Python (Flask)</option>
+                            <option value="javascript">JavaScript (Node.js/Express)</option>
+                            <option value="java">Java (Spring Boot)</option>
+                            <option value="csharp">C# (.NET Core)</option>
+                            <option value="php">PHP (Laravel)</option>
+                            <option value="ruby">Ruby (Rails)</option>
+                            <option value="go">Go (Gin)</option>
+                            <option value="typescript">TypeScript (Node.js)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="useCasesSection" class="use-cases-section" style="display: none;">
+                        <h4>Use Cases:</h4>
+                        <ul id="useCasesList" class="use-cases-list"></ul>
+                    </div>
+                </div>
+
+                <!-- Action Section -->
+                <div class="action-section">
+                    <button id="generateCodeBtn" class="btn btn-primary" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="16,18 22,12 16,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="8,6 2,12 8,18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Generate Code
+                    </button>
+                    <button id="generateTestsBtn" class="btn btn-secondary" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 11H15M9 15H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H17C18.1046 3 19 3.89543 19 5V19C19 20.1046 18.1046 21 17 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Generate Tests
+                    </button>
+                    <button id="verifyCodeBtn" class="btn btn-secondary" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Verify Code
+                    </button>
+                </div>
+
+                <!-- Status Section -->
+                <div class="status-section">
+                    <div id="status" class="status-info">
+                        Ready to upload and parse your SRS document.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Panel -->
+            <div class="help-panel">
+                <div class="help-header">
+                    <h3>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <path d="M9.09 9A3 3 0 0 1 12 6C13.66 6 15 7.34 15 9C15 10.66 13.66 12 12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        How to Use
+                    </h3>
+                </div>
+                <div class="help-content">
+                    <div class="help-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Upload SRS Document</strong>
+                            <p>Upload your Software Requirements Specification document (PDF, DOCX, or TXT format)</p>
+                        </div>
+                    </div>
+                    <div class="help-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>Select Functionality</strong>
+                            <p>Choose which functionality you want to generate code for from the dropdown</p>
+                        </div>
+                    </div>
+                    <div class="help-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>Generate Code</strong>
+                            <p>Click "Generate Code" to create production-ready Python code for the selected functionality</p>
+                        </div>
+                    </div>
+                    <div class="help-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Test & Verify</strong>
+                            <p>Generate test cases and verify your code to ensure it works correctly</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-panel">
+                <!-- Generated Code Section -->
+                <div id="codeSection" class="result-section" style="display: none;">
+                    <div class="section-header">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6C4.9 2 4 2.9 4 4V20C4 21.1 4.89 22 5.99 22H18C19.1 22 20 21.1 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Generated Code
+                        </h3>
+                    </div>
+                    <div id="codeContent" class="code-content"></div>
+                </div>
+
+                <!-- Generated Tests Section -->
+                <div id="testsSection" class="result-section" style="display: none;">
+                    <div class="section-header">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 11H15M9 15H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H17C18.1046 3 19 3.89543 19 5V19C19 20.1046 18.1046 21 17 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Generated Tests
+                        </h3>
+                    </div>
+                    <div id="testsContent" class="tests-content"></div>
+                </div>
+
+                <!-- Verification Section -->
+                <div id="verificationSection" class="result-section" style="display: none;">
+                    <div class="section-header">
+                        <h3>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Verification Results
+                        </h3>
+                    </div>
+                    <div id="verificationContent" class="verification-content"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Dashboard JavaScript for Kinmail SRS to Code Extension
+
+        class KinmailDashboard {
+            constructor() {
+                this.functionalities = [];
+                this.selectedFunctionality = null;
+                this.selectedLanguage = 'python';
+                this.generatedCode = null;
+                this.generatedTests = null;
+                this.verificationResults = null;
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                // Upload button
+                document.getElementById('uploadBtn').addEventListener('click', () => {
+                    this.uploadSRS();
+                });
+
+                // Generate code button
+                document.getElementById('generateCodeBtn').addEventListener('click', () => {
+                    this.generateCode();
+                });
+
+                // Generate tests button
+                document.getElementById('generateTestsBtn').addEventListener('click', () => {
+                    this.generateTests();
+                });
+
+                // Verify code button
+                document.getElementById('verifyCodeBtn').addEventListener('click', () => {
+                    this.verifyCode();
+                });
+
+                // Functionality selection
+                document.getElementById('functionalitySelect').addEventListener('change', (e) => {
+                    this.selectFunctionality(e.target.value);
+                });
+
+                // Language selection
+                document.getElementById('languageSelect').addEventListener('change', (e) => {
+                    this.selectedLanguage = e.target.value;
+                    console.log('🌐 [LANGUAGE] Selected language:', this.selectedLanguage);
+                });
+
+                // Listen for messages from the extension
+                window.addEventListener('message', (event) => {
+                    console.log('📨 [FRONTEND] Dashboard: Received message from extension:', event.data);
+                    console.log('🔍 [FRONTEND] Message type:', event.data?.type);
+                    console.log('🔍 [FRONTEND] Message functionalities:', event.data?.functionalities);
+                    const message = event.data;
+                    switch (message.type) {
+                        case 'srsParsed':
+                            console.log('📋 [FRONTEND] SRS parsed message received, functionalities:', message.functionalities);
+                            console.log('🔍 [FRONTEND] Message type:', message.type);
+                            console.log('🔍 [FRONTEND] Message content:', message.content);
+                            console.log('🔍 [FRONTEND] Functionalities count:', message.functionalities?.length);
+                            console.log('🔍 [FRONTEND] First functionality:', message.functionalities?.[0]);
+                            this.handleSRSParsed(message.functionalities);
+                            break;
+                        case 'codeGenerated':
+                            this.handleCodeGenerated(message.code, message.model);
+                            break;
+                        case 'testsGenerated':
+                            this.handleTestsGenerated(message.tests);
+                            break;
+                        case 'verificationComplete':
+                            this.handleVerificationComplete(message.results);
+                            break;
+                        case 'updateStatus':
+                            this.updateStatus(message.message, message.statusType);
+                            break;
+                        case 'showError':
+                            this.showError(message.message);
+                            break;
+                    }
+                });
+            }
+
+            uploadSRS() {
+                console.log('🔄 [UPLOAD] uploadSRS called - Starting file upload process');
+                const fileInput = document.getElementById('srsFileInput');
+                console.log('🔍 [UPLOAD] File input element:', fileInput);
+                const file = fileInput.files[0];
+                console.log('🔍 [UPLOAD] File from input:', file);
+                
+                if (!file) {
+                    console.log('❌ [UPLOAD] No file selected');
+                    this.showError('Please select a file first');
+                    return;
+                }
+                
+                console.log('📁 [UPLOAD] File selected:', file.name, 'Size:', file.size, 'Type:', file.type);
+                this.updateStatus('🔄 Reading and parsing SRS document with AI...', 'info');
+                
+                // Read the file content as ArrayBuffer for proper PDF handling
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const arrayBuffer = e.target.result;
+                    console.log('📄 [UPLOAD] File content read, buffer size:', arrayBuffer.byteLength);
+                    
+                    // Convert ArrayBuffer to base64 for transmission (chunked to avoid call stack overflow)
+                    const uint8Array = new Uint8Array(arrayBuffer);
+                    let base64Content = '';
+                    const chunkSize = 8192; // Process in chunks
+                    
+                    for (let i = 0; i < uint8Array.length; i += chunkSize) {
+                        const chunk = uint8Array.slice(i, i + chunkSize);
+                        base64Content += btoa(String.fromCharCode.apply(null, chunk));
+                    }
+                    
+                    console.log('📄 [UPLOAD] Base64 content length:', base64Content.length);
+                    
+                    console.log('📤 [UPLOAD] Sending file content to extension for processing...');
+                    console.log('🔍 [UPLOAD] About to call sendMessage...');
+                    // Send file content to extension for processing
+                    this.sendMessage({ 
+                        type: 'uploadSRS',
+                        file: {
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            content: base64Content,
+                            isBase64: true
+                        }
+                    });
+                    console.log('✅ [UPLOAD] File content sent to extension');
+                };
+                
+                reader.onerror = () => {
+                    console.error('❌ [UPLOAD] Error reading file');
+                    this.showError('Error reading file');
+                };
+                
+                // Read as ArrayBuffer to handle PDFs properly
+                reader.readAsArrayBuffer(file);
+            }
+
+            generateCode() {
+                console.log('🔄 [GENERATE] generateCode called - Starting code generation');
+                
+                if (!this.selectedFunctionality) {
+                    console.log('❌ [GENERATE] No functionality selected');
+                    this.showError('Please select a functionality first');
+                    return;
+                }
+                
+                console.log('⚙️ [GENERATE] Selected functionality:', this.selectedFunctionality.name);
+                console.log('📝 [GENERATE] Description:', this.selectedFunctionality.description);
+                console.log('🎯 [GENERATE] Use cases:', this.selectedFunctionality.useCases);
+                console.log('📦 [GENERATE] Context:', this.selectedFunctionality.context);
+                console.log('📋 [GENERATE] Requirements:', this.selectedFunctionality.requirements);
+                console.log('🔗 [GENERATE] Dependencies:', this.selectedFunctionality.dependencies);
+                console.log('🌐 [GENERATE] Selected language:', this.selectedLanguage);
+                
+                this.updateStatus(`🤖 Generating ${this.selectedLanguage} code with AI for: ${this.selectedFunctionality.name}`, 'info');
+                
+                console.log('📤 [GENERATE] Sending code generation request to extension...');
+                console.log('🔍 [GENERATE] About to send functionality:', this.selectedFunctionality);
+                console.log('🔍 [GENERATE] Functionality type:', typeof this.selectedFunctionality);
+                console.log('🔍 [GENERATE] Functionality name:', this.selectedFunctionality?.name);
+                
+                this.sendMessage({
+                    type: 'generateCode',
+                    functionality: this.selectedFunctionality,
+                    language: this.selectedLanguage,
+                    srsContent: 'SRS Content'
+                });
+                console.log('✅ [GENERATE] Code generation message sent to extension');
+            }
+
+            generateTests() {
+                if (!this.generatedCode) {
+                    this.showError('Please generate code first');
+                    return;
+                }
+                
+                console.log('🌐 [TESTS] Selected language:', this.selectedLanguage);
+                this.updateStatus(`Generating ${this.selectedLanguage} test cases with AI...`, 'info');
+                this.sendMessage({
+                    type: 'generateTests',
+                    code: this.generatedCode,
+                    functionality: this.selectedFunctionality,
+                    language: this.selectedLanguage
+                });
+            }
+
+            verifyCode() {
+                if (!this.generatedCode) {
+                    this.showError('Please generate code first');
+                    return;
+                }
+                
+                this.updateStatus('Running tests and verifying code...', 'info');
+                this.sendMessage({
+                    type: 'verifyCode',
+                    code: this.generatedCode,
+                    tests: this.generatedTests,
+                    language: this.selectedLanguage
+                });
+            }
+
+            selectFunctionality(functionalityIndex) {
+                const index = parseInt(functionalityIndex);
+                console.log('🔍 [FRONTEND] selectFunctionality called with index:', index);
+                console.log('🔍 [FRONTEND] Available functionalities:', this.functionalities);
+                console.log('🔍 [FRONTEND] Functionalities length:', this.functionalities?.length);
+                console.log('🔍 [FRONTEND] Functionality at index:', this.functionalities?.[index]);
+                
+                this.selectedFunctionality = this.functionalities[index];
+                
+                console.log('📦 [FRONTEND] Selected functionality:', this.selectedFunctionality);
+                console.log('🔍 [FRONTEND] Selected functionality type:', typeof this.selectedFunctionality);
+                console.log('🔍 [FRONTEND] Selected functionality name:', this.selectedFunctionality?.name);
+                
+                if (this.selectedFunctionality) {
+                    this.updateUseCases();
+                    this.updateButtons();
+                    this.updateFunctionalityDetails();
+                }
+            }
+
+            updateUseCases() {
+                const useCasesSection = document.getElementById('useCasesSection');
+                const useCasesList = document.getElementById('useCasesList');
+                
+                if (this.selectedFunctionality && this.selectedFunctionality.useCases) {
+                    useCasesSection.style.display = 'block';
+                    useCasesList.innerHTML = '';
+                    
+                    this.selectedFunctionality.useCases.forEach(useCase => {
+                        const li = document.createElement('li');
+                        li.textContent = useCase;
+                        useCasesList.appendChild(li);
+                    });
+                } else {
+                    useCasesSection.style.display = 'none';
+                }
+            }
+
+            updateFunctionalityDetails() {
+                // Show rich context information for the selected functionality
+                console.log('📦 [FRONTEND] Updating functionality details with context...');
+                console.log('📄 [FRONTEND] Description:', this.selectedFunctionality.description);
+                console.log('📄 [FRONTEND] Use Cases:', this.selectedFunctionality.useCases);
+                console.log('📄 [FRONTEND] Context:', this.selectedFunctionality.context);
+                console.log('📄 [FRONTEND] Requirements:', this.selectedFunctionality.requirements);
+                console.log('📄 [FRONTEND] Dependencies:', this.selectedFunctionality.dependencies);
+            }
+
+            handleSRSParsed(functionalities) {
+                console.log('📋 [FRONTEND] handleSRSParsed called with functionalities:', functionalities);
+                console.log('📊 [FRONTEND] Number of functionalities received:', functionalities.length);
+                console.log('📄 [FRONTEND] Functionalities details:', functionalities);
+                
+                // Debug each functionality object
+                functionalities.forEach((func, index) => {
+                    console.log(`🔍 [FRONTEND-DEBUG] Functionality ${index + 1}:`, func);
+                    console.log(`🔍 [FRONTEND-DEBUG] Functionality ${index + 1} keys:`, Object.keys(func));
+                    console.log(`🔍 [FRONTEND-DEBUG] Functionality ${index + 1} name:`, func.name);
+                    console.log(`🔍 [FRONTEND-DEBUG] Functionality ${index + 1} name type:`, typeof func.name);
+                });
+                
+                this.functionalities = functionalities;
+                this.updateFunctionalityDropdown();
+                this.updateFunctionalitySection();
+                this.updateStatus('SRS parsed successfully! Select a functionality to generate code.', 'success');
+            }
+
+            updateFunctionalityDropdown() {
+                console.log('🔄 [FRONTEND] updateFunctionalityDropdown called');
+                console.log('📊 [FRONTEND] Functionalities to populate:', this.functionalities);
+                console.log('🔍 [DEBUG] Functionalities type:', typeof this.functionalities);
+                console.log('🔍 [DEBUG] Functionalities length:', this.functionalities?.length);
+                console.log('🔍 [DEBUG] First functionality:', this.functionalities?.[0]);
+                console.log('🔍 [DEBUG] First functionality name:', this.functionalities?.[0]?.name);
+                console.log('🔍 [DEBUG] First functionality keys:', this.functionalities?.[0] ? Object.keys(this.functionalities[0]) : 'N/A');
+                
+                const select = document.getElementById('functionalitySelect');
+                select.innerHTML = '<option value="">Select a functionality...</option>';
+                
+                if (this.functionalities && this.functionalities.length > 0) {
+                    this.functionalities.forEach((func, index) => {
+                        console.log(`📋 [FRONTEND] Adding functionality ${index + 1}:`, func);
+                        console.log(`🔍 [DEBUG] Function ${index + 1} name:`, func.name);
+                        console.log(`🔍 [DEBUG] Function ${index + 1} type:`, typeof func.name);
+                        console.log(`🔍 [DEBUG] Function ${index + 1} keys:`, Object.keys(func));
+                        
+                        const option = document.createElement('option');
+                        option.value = index; // Use index as value for easy retrieval
+                        
+                        // Try multiple possible name fields
+                        let displayName = func.name || func.title || func.functionality || func.feature;
+                        if (!displayName) {
+                            displayName = `Functionality ${index + 1}`;
+                        }
+                        
+                        option.textContent = displayName;
+                        console.log(`🔍 [DEBUG] Setting dropdown text to: "${displayName}"`);
+                        select.appendChild(option);
+                    });
+                    console.log('✅ [FRONTEND] Dropdown populated with', this.functionalities.length, 'functionalities');
+                    
+                    // Debug: Check what's actually in the dropdown
+                    const options = select.querySelectorAll('option');
+                    console.log('🔍 [DEBUG] Dropdown options count:', options.length);
+                    console.log('🔍 [DEBUG] Dropdown HTML:', select.innerHTML);
+                    options.forEach((option, index) => {
+                        console.log(`🔍 [DEBUG] Option ${index}: value="${option.value}", text="${option.textContent}"`);
+                    });
+                    
+                    // Force a visual update
+                    select.style.display = 'none';
+                    select.offsetHeight; // Trigger reflow
+                    select.style.display = 'block';
+                } else {
+                    console.log('⚠️ [FRONTEND] No functionalities to populate dropdown');
+                }
+            }
+
+            updateFunctionalitySection() {
+                const section = document.getElementById('functionalitySection');
+                section.style.display = 'block';
+            }
+
+            handleCodeGenerated(code, model = null) {
+                this.generatedCode = code;
+                this.updateCodeSection(code, model);
+                this.updateButtons();
+                this.updateStatus(`Code generated successfully with ${model || 'AI'}!`, 'success');
+            }
+            
+            showDependencyInfo(dependencies) {
+                console.log('📦 [FRONTEND] Dependency installation result:', dependencies);
+                
+                // Create a notification or info panel for dependencies
+                const statusDiv = document.querySelector('.status-message');
+                if (statusDiv && dependencies.output) {
+                    const depInfo = document.createElement('div');
+                    depInfo.className = 'dependency-info';
+                    depInfo.innerHTML = `
+                        <div class="dependency-success">
+                            <span>📦 Dependencies installed: ${dependencies.message}</span>
+                        </div>
+                    `;
+                    statusDiv.appendChild(depInfo);
+                }
+            }
+
+            handleTestsGenerated(tests) {
+                this.generatedTests = tests;
+                this.updateTestsSection(tests);
+                this.updateButtons();
+                this.updateStatus('Test cases generated successfully!', 'success');
+            }
+
+            handleVerificationComplete(results) {
+                this.verificationResults = results;
+                this.updateVerificationSection(results);
+                this.updateStatus('Code verification completed!', 'success');
+            }
+
+            updateCodeSection(code, model = null) {
+                const section = document.getElementById('codeSection');
+                const content = document.getElementById('codeContent');
+                
+                section.style.display = 'block';
+                
+                // Create the HTML structure
+                const container = document.createElement('div');
+                container.className = 'code-snippet-container';
+                
+                // Create header with model info
+                const header = document.createElement('div');
+                header.className = 'code-snippet-header';
+                const modelInfo = model ? ` (Generated by: ${model})` : '';
+                header.innerHTML = `
+                    <span class="file-name">📄 Generated Code${modelInfo}</span>
+                    <button class="copy-btn" id="copyCodeBtn">📋 Copy</button>
+                `;
+                
+                // Create code snippet
+                const codeSnippet = document.createElement('div');
+                codeSnippet.className = 'code-snippet';
+                const pre = document.createElement('pre');
+                const codeElement = document.createElement('code');
+                codeElement.className = `language-${this.selectedLanguage}`;
+                codeElement.textContent = code;
+                pre.appendChild(codeElement);
+                codeSnippet.appendChild(pre);
+                
+                // Assemble container
+                container.appendChild(header);
+                container.appendChild(codeSnippet);
+                content.appendChild(container);
+                
+                // Add copy functionality
+                const copyBtn = container.querySelector('#copyCodeBtn');
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(code);
+                    copyBtn.textContent = '✅ Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = '📋 Copy';
+                    }, 2000);
+                });
+                
+                // Apply syntax highlighting
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightAll();
+                }
+            }
+
+            updateTestsSection(tests) {
+                const section = document.getElementById('testsSection');
+                const content = document.getElementById('testsContent');
+                
+                section.style.display = 'block';
+                
+                // Create the HTML structure
+                const container = document.createElement('div');
+                container.className = 'code-snippet-container';
+                
+                // Create header
+                const header = document.createElement('div');
+                header.className = 'code-snippet-header';
+                header.innerHTML = `
+                    <span class="file-name">🧪 Generated Test Cases</span>
+                    <button class="copy-btn" id="copyTestsBtn">📋 Copy</button>
+                `;
+                
+                // Create code snippet
+                const codeSnippet = document.createElement('div');
+                codeSnippet.className = 'code-snippet';
+                const pre = document.createElement('pre');
+                const codeElement = document.createElement('code');
+                codeElement.className = `language-${this.selectedLanguage}`;
+                codeElement.textContent = tests;
+                pre.appendChild(codeElement);
+                codeSnippet.appendChild(pre);
+                
+                // Assemble container
+                container.appendChild(header);
+                container.appendChild(codeSnippet);
+                content.appendChild(container);
+                
+                // Add copy functionality
+                const copyBtn = container.querySelector('#copyTestsBtn');
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(tests);
+                    copyBtn.textContent = '✅ Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = '📋 Copy';
+                    }, 2000);
+                });
+                
+                // Apply syntax highlighting
+                if (typeof Prism !== 'undefined') {
+                    Prism.highlightAll();
+                }
+            }
+
+            updateVerificationSection(results) {
+                const section = document.getElementById('verificationSection');
+                const content = document.getElementById('verificationContent');
+                
+                section.style.display = 'block';
+                
+                const testResults = results.testResults || { passed: 0, failed: 0, total: 0 };
+                const passRate = testResults.total > 0 ? Math.round((testResults.passed / testResults.total) * 100) : 0;
+                
+                content.innerHTML = `
+                    <div class="verification-results">
+                        <div class="result-item ${results.success ? 'success' : 'error'}">
+                            <h4>${results.success ? '✅ Verification Passed' : '❌ Verification Failed'}</h4>
+                            <p>${results.message}</p>
+                            
+                            <div class="test-summary">
+                                <div class="test-stats">
+                                    <div class="stat-item passed">
+                                        <span class="stat-number">${testResults.passed}</span>
+                                        <span class="stat-label">Passed</span>
+                                    </div>
+                                    <div class="stat-item failed">
+                                        <span class="stat-number">${testResults.failed}</span>
+                                        <span class="stat-label">Failed</span>
+                                    </div>
+                                    <div class="stat-item total">
+                                        <span class="stat-number">${testResults.total}</span>
+                                        <span class="stat-label">Total</span>
+                                    </div>
+                                    <div class="stat-item rate">
+                                        <span class="stat-number">${passRate}%</span>
+                                        <span class="stat-label">Pass Rate</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            ${results.details ? `<pre><code>${this.escapeHtml(results.details)}</code></pre>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            updateButtons() {
+                const generateCodeBtn = document.getElementById('generateCodeBtn');
+                const generateTestsBtn = document.getElementById('generateTestsBtn');
+                const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+
+                generateCodeBtn.disabled = !this.selectedFunctionality;
+                generateTestsBtn.disabled = !this.generatedCode;
+                verifyCodeBtn.disabled = !this.generatedCode;
+            }
+
+            updateStatus(message, type = 'info') {
+                const status = document.getElementById('status');
+                status.textContent = message;
+                status.className = `status-info ${type}`;
+            }
+
+            showError(message) {
+                this.updateStatus('❌ ' + message, 'error');
+            }
+
+            showSuccess(message) {
+                this.updateStatus('✅ ' + message, 'success');
+            }
+
+            sendMessage(message) {
+                console.log('📤 [WEBVIEW] Attempting to send message:', message);
+                console.log('🔍 [WEBVIEW] typeof vscode:', typeof vscode);
+                console.log('🔍 [WEBVIEW] vscode object:', vscode);
+                
+                // Use the injected VS Code API
+                if (typeof vscode !== 'undefined' && vscode.postMessage) {
+                    console.log('✅ [WEBVIEW] Using injected vscode.postMessage');
+                    vscode.postMessage(message);
+                    console.log('✅ [WEBVIEW] Message sent via injected vscode.postMessage');
+                } else {
+                    console.error('❌ [WEBVIEW] VS Code API not available');
+                    console.log('🔍 [WEBVIEW] Available objects:', Object.keys(window));
+                    console.log('🔍 [WEBVIEW] window.vscode:', window.vscode);
+                    console.log('🔍 [WEBVIEW] window.acquireVsCodeApi:', typeof window.acquireVsCodeApi);
+                }
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize dashboard when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.dashboard = new KinmailDashboard();
+        });
+    </script>
+</body>
+</html>
