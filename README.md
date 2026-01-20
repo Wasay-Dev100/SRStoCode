@@ -1,4 +1,4 @@
-# Kinmail SRS to Code - MVC Architecture Extension 
+#  SRS to Code - MVC Architecture Extension 
 
 An AI-powered VS Code extension that generates complete, production-ready MVC (Model-View-Controller) code from Software Requirements Specifications (SRS) documents.
 
