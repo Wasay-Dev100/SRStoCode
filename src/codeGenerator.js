@@ -5,7 +5,7 @@ class CodeGenerator {
     constructor(context) {
         this.context = context;
     }
-
+ 
     async generateCode(feature) {
         try {
             const config = vscode.workspace.getConfiguration('kinmail');
