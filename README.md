@@ -2,7 +2,7 @@
 
 An AI-powered VS Code extension that generates complete, production-ready MVC (Model-View-Controller) code from Software Requirements Specifications (SRS) documents.
 
-![Alt text](images/srsto1.png)
+![Alt text](images/SRSto1.png)
 
 
 ## What it Does
